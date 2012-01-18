@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service id="remoting-service" 
+    class="flex.messaging.services.RemotingService">
+
+    <adapters>
+        <adapter-definition id="java-object" class="flex.messaging.services.remoting.adapters.JavaAdapter" default="true"/>
+    </adapters>
+
+    <default-channels>
+        <channel ref="my-amf"/>
+    </default-channels>
+	
+	<destination id="HibDemoDestination" channels="my-amf">
+		<properties>
+			<source>com.ca.on.burlington.demo.ListAllUsers</source>
+		</properties>
+	</destination>
+	<destination id="userDAO" channels="my-amf">
+		<properties>
+			<source>DAO.UserDAO</source>
+		</properties>
+	</destination>
+	<destination id="groupDAO" channels="my-amf">
+		<properties>
+			<source>DAO.GroupDAO</source>
+		</properties>
+	</destination>
+	<destination id="fileDAO" channels="my-amf">
+		<properties>
+			<source>DAO.FileDAO</source>
+		</properties>
+	</destination>
+	<destination id="commentDAO" channels="my-amf">
+		<properties>
+			<source>DAO.CommentDAO</source>
+		</properties>
+	</destination>
+	<destination id="messageDAO" channels="my-amf">
+		<properties>
+			<source>DAO.MessageDAO</source>
+		</properties>
+	</destination>
+
+</service>
