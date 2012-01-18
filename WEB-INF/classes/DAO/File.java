@@ -1,5 +1,5 @@
 package DAO;
-// Generated 16 janv. 2012 17:03:25 by Hibernate Tools 3.2.1.GA
+// Generated 18 janv. 2012 11:07:01 by Hibernate Tools 3.2.1.GA
 
 
 import java.util.Date;

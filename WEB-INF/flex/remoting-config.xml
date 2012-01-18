@@ -10,11 +10,6 @@
         <channel ref="my-amf"/>
     </default-channels>
 	
-	<destination id="HibDemoDestination" channels="my-amf">
-		<properties>
-			<source>com.ca.on.burlington.demo.ListAllUsers</source>
-		</properties>
-	</destination>
 	<destination id="userDAO" channels="my-amf">
 		<properties>
 			<source>DAO.UserDAO</source>
