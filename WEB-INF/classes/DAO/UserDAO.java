@@ -26,10 +26,6 @@ import org.hibernate.Session;
  * getGroups() : group_admin
  * getGroups_1 : group
  */
-
-
-
-
 public class UserDAO {
 
     Session session = null;
@@ -38,7 +34,7 @@ public class UserDAO {
         this.session = HibernateUtil.getSessionFactory().getCurrentSession();
     }
 
-    public void subscription(String email, String password, String username, String firstName, String lastName) {
+    public String subscription(String email, String password, String username, String firstName, String lastName) {
         byte[] defaultBytes = password.getBytes();
         try {
             MessageDigest algorithm = MessageDigest.getInstance("MD5");
@@ -54,14 +50,31 @@ public class UserDAO {
         } catch (NoSuchAlgorithmException nsae) {
         }
 
-        User user = new User(firstName, lastName, password, email, username);
-
         org.hibernate.Transaction tx = session.beginTransaction();
-        session.save(user);
-        tx.commit();
+        User user = new User(firstName, lastName, password, email, username);
+        try {
+            Query q = session.createQuery("from User user where user_name='" + username + "'");
+            Iterator it = q.iterate();
+            if (!it.hasNext()) {
+                q = session.createQuery("from User user where email='" + email + "'");
+                it = q.iterate();
+                if (!it.hasNext()) {
+                    session.save(user);
+                    tx.commit();
+                    return "";
+                } else {
+                    return "Email déjà utilisé";
+                }
+            } else {
+                return "Username déjà utilisé";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
 
     }
-    
+
     public User getUser(int id) {
         User user = new User();
         try {
@@ -94,7 +107,6 @@ public class UserDAO {
 //            return null;
 //        }
 //    }
-
     public User findUserByEmail(String email) {
         User user = null;
         try {
