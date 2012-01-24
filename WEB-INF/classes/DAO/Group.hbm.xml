@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 16 janv. 2012 17:03:27 by Hibernate Tools 3.2.1.GA -->
+<!-- Generated 24 janv. 2012 14:13:23 by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
     <class name="DAO.Group" table="group" catalog="simstudio">
         <id name="id" type="java.lang.Integer">
@@ -11,14 +11,6 @@
         <property name="name" type="string">
             <column name="name" length="30" not-null="true" />
         </property>
-        <set name="files" inverse="false" table="group_file">
-            <key>
-                <column name="group_id" not-null="true" />
-            </key>
-            <many-to-many entity-name="DAO.File">
-                <column name="file_id" not-null="true" />
-            </many-to-many>
-        </set>
         <set name="users" inverse="false" table="group_admin">
             <key>
                 <column name="group_id" not-null="true" />
@@ -27,12 +19,12 @@
                 <column name="user_id" not-null="true" />
             </many-to-many>
         </set>
-        <set name="users_1" inverse="false" table="group_user">
+        <set name="files" inverse="false" table="group_file">
             <key>
                 <column name="group_id" not-null="true" />
             </key>
-            <many-to-many entity-name="DAO.User">
-                <column name="user_id" not-null="true" />
+            <many-to-many entity-name="DAO.File">
+                <column name="file_id" not-null="true" />
             </many-to-many>
         </set>
         <set name="messages" inverse="true">
@@ -40,6 +32,14 @@
                 <column name="id_group" not-null="true" />
             </key>
             <one-to-many class="DAO.Message" />
+        </set>
+        <set name="users_1" inverse="false" table="group_user">
+            <key>
+                <column name="group_id" not-null="true" />
+            </key>
+            <many-to-many entity-name="DAO.User">
+                <column name="user_id" not-null="true" />
+            </many-to-many>
         </set>
     </class>
 </hibernate-mapping>

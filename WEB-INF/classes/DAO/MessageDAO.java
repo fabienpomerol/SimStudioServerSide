@@ -43,7 +43,7 @@ public class MessageDAO {
         return listComments;
     }
 
-    public List<Messages> getMessagesByGroup(Group group) {
+    public List<Message> getMessagesByGroup(Group group) {
         List listMessages = new ArrayList();
         Set<Message> setMessages = group.getMessages();
         Iterator<Message> it = setMessages.iterator();

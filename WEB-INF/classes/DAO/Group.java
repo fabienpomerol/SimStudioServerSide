@@ -1,5 +1,5 @@
 package DAO;
-// Generated 16 janv. 2012 17:03:25 by Hibernate Tools 3.2.1.GA
+// Generated 24 janv. 2012 14:13:23 by Hibernate Tools 3.2.1.GA
 
 
 import java.util.HashSet;
@@ -13,10 +13,10 @@ public class Group  implements java.io.Serializable {
 
      private Integer id;
      private String name;
-     private Set files = new HashSet(0);
      private Set users = new HashSet(0);
-     private Set users_1 = new HashSet(0);
+     private Set files = new HashSet(0);
      private Set messages = new HashSet(0);
+     private Set users_1 = new HashSet(0);
 
     public Group() {
     }
@@ -25,12 +25,12 @@ public class Group  implements java.io.Serializable {
     public Group(String name) {
         this.name = name;
     }
-    public Group(String name, Set files, Set users, Set users_1, Set messages) {
+    public Group(String name, Set users, Set files, Set messages, Set users_1) {
        this.name = name;
-       this.files = files;
        this.users = users;
-       this.users_1 = users_1;
+       this.files = files;
        this.messages = messages;
+       this.users_1 = users_1;
     }
    
     public Integer getId() {
@@ -47,13 +47,6 @@ public class Group  implements java.io.Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    public Set getFiles() {
-        return this.files;
-    }
-    
-    public void setFiles(Set files) {
-        this.files = files;
-    }
     public Set getUsers() {
         return this.users;
     }
@@ -61,12 +54,12 @@ public class Group  implements java.io.Serializable {
     public void setUsers(Set users) {
         this.users = users;
     }
-    public Set getUsers_1() {
-        return this.users_1;
+    public Set getFiles() {
+        return this.files;
     }
     
-    public void setUsers_1(Set users_1) {
-        this.users_1 = users_1;
+    public void setFiles(Set files) {
+        this.files = files;
     }
     public Set getMessages() {
         return this.messages;
@@ -74,6 +67,13 @@ public class Group  implements java.io.Serializable {
     
     public void setMessages(Set messages) {
         this.messages = messages;
+    }
+    public Set getUsers_1() {
+        return this.users_1;
+    }
+    
+    public void setUsers_1(Set users_1) {
+        this.users_1 = users_1;
     }
 
 

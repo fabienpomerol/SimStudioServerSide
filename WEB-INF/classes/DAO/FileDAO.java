@@ -22,16 +22,18 @@ public class FileDAO {
     Session session = null;
 
     public FileDAO() {
-        this.session = HibernateUtil.getSessionFactory().getCurrentSession();
+            this.session = HibernateUtil.getSessionFactory().getCurrentSession();
     }
+    
+    
 
     public void addFile(User user, String name, String extension, int size) {
         Date date = new Date();
         File file = new File(user, name, extension, size, date, date);
 
-        org.hibernate.Transaction tx = session.beginTransaction();
+        /*org.hibernate.Transaction tx = session.beginTransaction();*/
         session.save(file);
-        tx.commit();
+        /*tx.commit();*/
     }
 
     public List getFiles() {
@@ -112,5 +114,32 @@ public class FileDAO {
         org.hibernate.Transaction tx = session.beginTransaction();
         session.save(user);
         tx.commit();
+    }
+    
+    public List[] removeGroupAddFiles(List[] lists) {
+        System.out.println("5 : " + session.isOpen());
+        System.out.println("6 : " + session.isOpen());
+        Iterator<File> itFile = lists[1].iterator();
+        System.out.println("7 : " + session.isOpen());
+
+        org.hibernate.Transaction tx = session.beginTransaction();
+        while (itFile.hasNext()) {
+            System.out.println("8 : " + session.isOpen());
+            Iterator<User> itUser = lists[0].iterator();
+            System.out.println("9 : " + session.isOpen());
+            File f = itFile.next();
+            while (itUser.hasNext()) {
+                System.out.println("10 : " + session.isOpen());
+                System.out.println("11 : " + session.isOpen());
+                User u = itUser.next();
+                System.out.println("12 : " + session.isOpen());
+                File fCopie = new File(u, f.getName() + "_" + u.getFirstName() + "_" + u.getLastName(), f.getExtension(), f.getSize(), f.getCreatedAt(), f.getUpdateAt());
+                System.out.println("13 : " + session.isOpen());
+                session.save(fCopie);
+                System.out.println("14 : " + session.isOpen());
+            }
+        }
+        tx.commit();
+        return lists;
     }
 }

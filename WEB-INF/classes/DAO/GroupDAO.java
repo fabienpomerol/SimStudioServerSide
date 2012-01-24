@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
 
 /**
  *
@@ -31,16 +31,16 @@ public class GroupDAO {
         this.session = HibernateUtil.getSessionFactory().getCurrentSession();
     }
 
-    public void addGroup(String name, User user){
+    public void addGroup(String name, User user) {
         Group gr = new Group(name);
         gr.getUsers().add(user);
-        
+
         org.hibernate.Transaction tx = session.beginTransaction();
         session.save(gr);
         tx.commit();
-        
+
     }
-    
+
     public List getGroups() {
         List<Group> groupList = null;
         try {
@@ -154,6 +154,14 @@ public class GroupDAO {
     }
     /* a tester */
 
+    public boolean isGroupAdmin(User user, Group group) {
+        if (group.getUsers().contains(user)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void removeGroupAdmin(Group group, User user) {
         if (group.getUsers().size() > 1) {
             group.getUsers().remove(user);
@@ -163,6 +171,41 @@ public class GroupDAO {
         }
     }
 
-    /*à tester*/
+    public List[] removeGroup(Group group) {
+        Set<File> setFiles = group.getFiles();
+        Set<User> setUsers = group.getUsers_1();
+        List[] lists = new List[2];
+
+        Iterator<File> itFiles = setFiles.iterator();
+        Iterator<User> itUsers = setUsers.iterator();
+        List<File> listFiles = new ArrayList<File>();
+        List<User> listUsers = new ArrayList<User>();
+        while (itFiles.hasNext()) {
+            listFiles.add(itFiles.next());
+        }
+        while (itUsers.hasNext()) {
+            listUsers.add(itUsers.next());
+        }
+
+        lists[0] = listUsers;
+        lists[1] = listFiles;
+
+        org.hibernate.Transaction tx = session.beginTransaction();
+        session.delete(group);
+        tx.commit();
+
+        return lists;
+    }
+    /*
     
+    FileDAO fDAO = new FileDAO();
+    //org.hibernate.Transaction tx2 = session.beginTransaction();
+    //session.lock(fDAO.session, LockMode.NONE);
+    
+    for (int i = 0; i < userList.size(); i++) {
+    for (int j = 0; j < fileList.size(); j++) {
+    System.out.println("ok");
+    fDAO.addFile(userList.get(i), fileList.get(j).getName(), fileList.get(j).getExtension(), fileList.get(j).getSize());
+    }
+    }*/
 }

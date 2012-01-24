@@ -1,5 +1,5 @@
 package DAO;
-// Generated 16 janv. 2012 17:03:25 by Hibernate Tools 3.2.1.GA
+// Generated 24 janv. 2012 14:13:23 by Hibernate Tools 3.2.1.GA
 
 
 import java.util.HashSet;
@@ -18,11 +18,13 @@ public class User  implements java.io.Serializable {
      private String email;
      private String userName;
      private Set groups = new HashSet(0);
+     private Set usersForIdUser1 = new HashSet(0);
      private Set files = new HashSet(0);
+     private Set usersForIdUser2 = new HashSet(0);
      private Set files_1 = new HashSet(0);
-     private Set groups_1 = new HashSet(0);
      private Set comments = new HashSet(0);
      private Set messages = new HashSet(0);
+     private Set groups_1 = new HashSet(0);
 
     public User() {
     }
@@ -35,19 +37,21 @@ public class User  implements java.io.Serializable {
         this.email = email;
         this.userName = userName;
     }
-//    public User(String firstName, String lastName, String password, String email, String userName, Set groups, Set files, Set files_1, Set groups_1, Set comments, Set messages) {
-//       this.firstName = firstName;
-//       this.lastName = lastName;
-//       this.password = password;
-//       this.email = email;
-//       this.userName = userName;
-//       this.groups = groups;
-//       this.files = files;
-//       this.files_1 = files_1;
-//       this.groups_1 = groups_1;
-//       this.comments = comments;
-//       this.messages = messages;
-//    }
+    public User(String firstName, String lastName, String password, String email, String userName, Set groups, Set usersForIdUser1, Set files, Set usersForIdUser2, Set files_1, Set comments, Set messages, Set groups_1) {
+       this.firstName = firstName;
+       this.lastName = lastName;
+       this.password = password;
+       this.email = email;
+       this.userName = userName;
+       this.groups = groups;
+       this.usersForIdUser1 = usersForIdUser1;
+       this.files = files;
+       this.usersForIdUser2 = usersForIdUser2;
+       this.files_1 = files_1;
+       this.comments = comments;
+       this.messages = messages;
+       this.groups_1 = groups_1;
+    }
    
     public Integer getId() {
         return this.id;
@@ -98,6 +102,13 @@ public class User  implements java.io.Serializable {
     public void setGroups(Set groups) {
         this.groups = groups;
     }
+    public Set getUsersForIdUser1() {
+        return this.usersForIdUser1;
+    }
+    
+    public void setUsersForIdUser1(Set usersForIdUser1) {
+        this.usersForIdUser1 = usersForIdUser1;
+    }
     public Set getFiles() {
         return this.files;
     }
@@ -105,19 +116,19 @@ public class User  implements java.io.Serializable {
     public void setFiles(Set files) {
         this.files = files;
     }
+    public Set getUsersForIdUser2() {
+        return this.usersForIdUser2;
+    }
+    
+    public void setUsersForIdUser2(Set usersForIdUser2) {
+        this.usersForIdUser2 = usersForIdUser2;
+    }
     public Set getFiles_1() {
         return this.files_1;
     }
     
     public void setFiles_1(Set files_1) {
         this.files_1 = files_1;
-    }
-    public Set getGroups_1() {
-        return this.groups_1;
-    }
-    
-    public void setGroups_1(Set groups_1) {
-        this.groups_1 = groups_1;
     }
     public Set getComments() {
         return this.comments;
@@ -132,6 +143,13 @@ public class User  implements java.io.Serializable {
     
     public void setMessages(Set messages) {
         this.messages = messages;
+    }
+    public Set getGroups_1() {
+        return this.groups_1;
+    }
+    
+    public void setGroups_1(Set groups_1) {
+        this.groups_1 = groups_1;
     }
 
 

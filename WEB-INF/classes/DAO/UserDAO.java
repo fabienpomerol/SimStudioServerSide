@@ -10,9 +10,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import javax.transaction.Transaction;
+import org.hibernate.LazyInitializationException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 
 /**
  *
@@ -107,6 +108,37 @@ public class UserDAO {
 //            return null;
 //        }
 //    }
+    public void addCollaborator(User us1, User us2) {
+
+        org.hibernate.Transaction tx = session.beginTransaction();
+        us1.getUsersForIdUser1().add(us2);
+        session.save(us1);
+        tx.commit();
+    }
+
+    public List<User> getCollaborator(User user) {
+        List<User> listUser = new ArrayList<User>();
+        Set<User> setUser = user.getUsersForIdUser1();
+        Iterator<User> it = setUser.iterator();
+        while (it.hasNext()) {
+            listUser.add(it.next());
+        }
+        setUser = user.getUsersForIdUser2();
+        it = setUser.iterator();
+        while (it.hasNext()) {
+            listUser.add(it.next());
+        }
+        return listUser;
+    }
+
+    public void removeCollaborator(User us1, User us2) {
+        org.hibernate.Transaction tx = session.beginTransaction();
+        us1.getUsersForIdUser1().remove(us2);
+        us1.getUsersForIdUser2().remove(us2);
+        session.save(us1);
+        tx.commit();
+    }
+
     public User findUserByEmail(String email) {
         User user = null;
         try {
@@ -124,6 +156,18 @@ public class UserDAO {
         try {
             org.hibernate.Transaction tx = session.beginTransaction();
             Query q = session.createQuery("from User where user_name like '%" + term + "%' or email like '%" + term + "%'");
+            userList = (List<User>) q.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userList;
+    }
+
+    public List<User> findUserByFirstnameOrLastname(String term) {
+        List<User> userList = null;
+        try {
+            org.hibernate.Transaction tx = session.beginTransaction();
+            Query q = session.createQuery("from User where first_name like '%" + term + "%' or last_name like '%" + term + "%'");
             userList = (List<User>) q.list();
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,5 +221,43 @@ public class UserDAO {
             }
         }
         return listFiles;
+    }
+
+    public List[] removeGroupAddUserFiles(List[] lists) {
+        System.out.println("15 : " + session.isOpen());
+        Iterator<User> itUser = lists[0].iterator();
+        System.out.println("16 : " + session.isOpen());
+
+        org.hibernate.Transaction tx = session.beginTransaction();
+
+        while (itUser.hasNext()) {
+            System.out.println("17 : " + session.isOpen());
+            Iterator<File> itFile = lists[1].iterator();
+            System.out.println("18 : " + session.isOpen());
+            User u = itUser.next();
+            while (itFile.hasNext()) {
+                System.out.println("19 : " + session.isOpen());
+                File f = itFile.next();
+                System.out.println("20 : " + session.isOpen());
+                try {
+                    u.getFiles();//.add(f);
+                } catch (LazyInitializationException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("21 : " + session.isOpen());
+            }
+            try {
+                session.update(u);
+            } catch (ConstraintViolationException e) {
+                e.printStackTrace();
+            }
+            System.out.println("22 : " + session.isOpen());
+        }
+        tx.commit();
+        return lists;
+    }
+    
+    public void addFileToUser(File f){
+        
     }
 }

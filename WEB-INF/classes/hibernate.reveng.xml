@@ -2,13 +2,14 @@
 <!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
 <hibernate-reverse-engineering>
   <schema-selection match-catalog="simstudio"/>
-  <table-filter match-name="group_user"/>
-  <table-filter match-name="user"/>
-  <table-filter match-name="message"/>
+  <table-filter match-name="group_admin"/>
+  <table-filter match-name="file"/>
+  <table-filter match-name="comment"/>
   <table-filter match-name="file_user"/>
+  <table-filter match-name="message"/>
   <table-filter match-name="group"/>
   <table-filter match-name="group_file"/>
-  <table-filter match-name="group_admin"/>
-  <table-filter match-name="comment"/>
-  <table-filter match-name="file"/>
+  <table-filter match-name="group_user"/>
+  <table-filter match-name="user_collaborator"/>
+  <table-filter match-name="user"/>
 </hibernate-reverse-engineering>

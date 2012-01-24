@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 16 janv. 2012 17:03:27 by Hibernate Tools 3.2.1.GA -->
+<!-- Generated 24 janv. 2012 14:13:23 by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
     <class name="DAO.User" table="user" catalog="simstudio">
         <id name="id" type="java.lang.Integer">
@@ -31,11 +31,27 @@
                 <column name="group_id" not-null="true" />
             </many-to-many>
         </set>
+        <set name="usersForIdUser1" inverse="false" table="user_collaborator">
+            <key>
+                <column name="id_user_2" not-null="true" />
+            </key>
+            <many-to-many entity-name="DAO.User">
+                <column name="id_user_1" not-null="true" />
+            </many-to-many>
+        </set>
         <set name="files" inverse="true">
             <key>
                 <column name="owner_id" not-null="true" />
             </key>
             <one-to-many class="DAO.File" />
+        </set>
+        <set name="usersForIdUser2" inverse="false" table="user_collaborator">
+            <key>
+                <column name="id_user_1" not-null="true" />
+            </key>
+            <many-to-many entity-name="DAO.User">
+                <column name="id_user_2" not-null="true" />
+            </many-to-many>
         </set>
         <set name="files_1" inverse="false" table="file_user">
             <key>
@@ -43,14 +59,6 @@
             </key>
             <many-to-many entity-name="DAO.File">
                 <column name="file_id" not-null="true" />
-            </many-to-many>
-        </set>
-        <set name="groups_1" inverse="false" table="group_user">
-            <key>
-                <column name="user_id" not-null="true" />
-            </key>
-            <many-to-many entity-name="DAO.Group">
-                <column name="group_id" not-null="true" />
             </many-to-many>
         </set>
         <set name="comments" inverse="true">
@@ -64,6 +72,14 @@
                 <column name="writer" not-null="true" />
             </key>
             <one-to-many class="DAO.Message" />
+        </set>
+        <set name="groups_1" inverse="false" table="group_user">
+            <key>
+                <column name="user_id" not-null="true" />
+            </key>
+            <many-to-many entity-name="DAO.Group">
+                <column name="group_id" not-null="true" />
+            </many-to-many>
         </set>
     </class>
 </hibernate-mapping>
