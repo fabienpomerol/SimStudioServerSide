@@ -35,5 +35,10 @@
 			<source>DAO.MessageDAO</source>
 		</properties>
 	</destination>
+	<destination id="sessionDAO" channels="my-amf">
+		<properties>
+			<source>DAO.Session</source>
+		</properties>
+	</destination>
 
 </service>

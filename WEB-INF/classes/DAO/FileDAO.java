@@ -100,12 +100,8 @@ public class FileDAO {
     }
 
     public List<File> getFilesByUser(User user) {
+        List<File> listFiles = new ArrayList();
         Set<File> setFiles = user.getFiles();
-        List listFiles = new ArrayList();
-        Iterator<File> it = setFiles.iterator();
-        while (it.hasNext()) {
-            listFiles.add(it.next());
-        }
         return listFiles;
     }
 
@@ -113,6 +109,13 @@ public class FileDAO {
         user.getFiles().add(file);
         org.hibernate.Transaction tx = session.beginTransaction();
         session.save(user);
+        tx.commit();
+    }
+    
+    public void removeFile(int id){
+        org.hibernate.Transaction tx = session.beginTransaction();
+        File f=  getFileByID(id);
+        session.delete(f);
         tx.commit();
     }
     

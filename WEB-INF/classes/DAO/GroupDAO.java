@@ -5,9 +5,11 @@
 package DAO;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import org.hibernate.LazyInitializationException;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -17,7 +19,8 @@ import org.hibernate.Session;
  * @author babusseuil
  */
 /* getUsers = group_admin
- * getUsers_1 = group 
+ * getUsers_1 = ask_relationship_group 
+ * getUsers_2 : group_users
  * 
  * 
  * 
@@ -89,9 +92,11 @@ public class GroupDAO {
         return group;
     }
 
-    public List<User> getGroupCollaborators(Group g) {
-        Set<User> setUsers = getGroupById(g.getId()).getUsers();
-        List<User> listUsers = new ArrayList<User>();
+    public List<User> getGroupCollaborators(int groupId) {
+        Group g = getGroupById(groupId);
+        Set<User> setUsers = g.getUsers_2();
+        List<User> listUsers = new ArrayList();
+        
         Iterator<User> it = setUsers.iterator();
         while (it.hasNext()) {
             listUsers.add(it.next());
@@ -101,7 +106,7 @@ public class GroupDAO {
 
     public List<File> getGroupFiles(Group g) {
         Set<File> setFiles = getGroupById(g.getId()).getFiles();
-        List<File> listFiles = new ArrayList<File>();
+        List<File> listFiles = new ArrayList();
         Iterator<File> it = setFiles.iterator();
         while (it.hasNext()) {
             listFiles.add(it.next());
@@ -110,18 +115,18 @@ public class GroupDAO {
     }
 
     public void addUserToGroup(User user, Group group) {
-        group.getUsers_1().add(user);
+        group.getUsers_2().add(user);
         org.hibernate.Transaction tx = session.beginTransaction();
         session.save(group);
         tx.commit();
     }
 
-    public boolean removeUserFromGroup(User user, Group group) {
+    public boolean removeUserFromGroup(User user, int idGroup) {
+        Group group = getGroupById(idGroup);
         if (group.getUsers().contains(user) && group.getUsers().size() == 1) {
             return false;
         } else {
-            List<User> listUsers = new ArrayList<User>();
-            Set<User> setUsers = group.getUsers_1();
+            Set<User> setUsers = group.getUsers_2();
             Iterator it = setUsers.iterator();
             System.out.println(setUsers.size());
             while (it.hasNext()) {
@@ -145,14 +150,12 @@ public class GroupDAO {
         tx.commit();
     }
 
-    /* a tester*/
     public void addGroupAdmin(Group group, User user) {
         group.getUsers().add(user);
         org.hibernate.Transaction tx = session.beginTransaction();
         session.save(group);
         tx.commit();
     }
-    /* a tester */
 
     public boolean isGroupAdmin(User user, Group group) {
         if (group.getUsers().contains(user)) {
@@ -171,9 +174,9 @@ public class GroupDAO {
         }
     }
 
-    public List[] removeGroup(Group group) {
+    public void removeGroup(Group group) {
         Set<File> setFiles = group.getFiles();
-        Set<User> setUsers = group.getUsers_1();
+        Set<User> setUsers = group.getUsers_2();
         List[] lists = new List[2];
 
         Iterator<File> itFiles = setFiles.iterator();
@@ -192,20 +195,39 @@ public class GroupDAO {
 
         org.hibernate.Transaction tx = session.beginTransaction();
         session.delete(group);
-        tx.commit();
+        
+        Iterator<File> itFile = lists[1].iterator();
 
-        return lists;
+        while (itFile.hasNext()) {
+            Iterator<User> itUser = lists[0].iterator();
+            File f = itFile.next();
+            while (itUser.hasNext()) {
+                User u = itUser.next();
+                File fCopie = new File(u, f.getName() + "_" + u.getFirstName() + "_" + u.getLastName(), f.getExtension(), f.getSize(), f.getCreatedAt(), f.getUpdateAt());
+                fCopie.getUsers().add(u);
+                session.save(fCopie);
+                session.delete(f);
+            }
+        }
+        tx.commit();
     }
-    /*
     
-    FileDAO fDAO = new FileDAO();
-    //org.hibernate.Transaction tx2 = session.beginTransaction();
-    //session.lock(fDAO.session, LockMode.NONE);
-    
-    for (int i = 0; i < userList.size(); i++) {
-    for (int j = 0; j < fileList.size(); j++) {
-    System.out.println("ok");
-    fDAO.addFile(userList.get(i), fileList.get(j).getName(), fileList.get(j).getExtension(), fileList.get(j).getSize());
+    public Message getLastGroupMessage(int groupId){
+        Group g = getGroupById(groupId);
+        Set<Message> messages = g.getMessages();
+        Iterator<Message> itMess = messages.iterator();
+        Message mess = new Message();
+        long date = 1;
+        Date d = new Date(date);
+        while(itMess.hasNext())
+        {
+            Message m = itMess.next();
+            if(m.getCreatedAt().after(d))
+            {
+                d=m.getCreatedAt();
+                mess=m;
+            }
+        }
+        return mess;
     }
-    }*/
 }

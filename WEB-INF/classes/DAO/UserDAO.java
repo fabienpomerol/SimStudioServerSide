@@ -4,6 +4,8 @@
  */
 package DAO;
 
+import flex.messaging.FlexContext;
+import flex.messaging.FlexSession;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -25,7 +27,15 @@ import org.hibernate.exception.ConstraintViolationException;
  * getFiles_1() : file_user
  * 
  * getGroups() : group_admin
- * getGroups_1 : group
+ * getGroups_1 : asking_relationship_groups
+ * getGroups_2 : group_user
+ * 
+ * usersForIdUser1 de user 1 => renvoie colonne 1 de asking_relationship_user où colonne 2 = 1
+ * usersForIdUser2 de user 1 => renvoie colonne 2 de asking_relationship_user où colonne 1 = 1
+ * 
+ * usersForIdUser1_1 de user 1 => renvoie colonne 1 de user_collaborator où colonne 2 = 1
+ * usersForIdUser2_1 de user 1 => renvoie colonne 2 de user_collaborator où colonne 1 = 1
+ * 
  */
 public class UserDAO {
 
@@ -99,31 +109,35 @@ public class UserDAO {
         }
         return userList;
     }
-
-    // A voir le retour
-//    public User getUser(String password, String email) {
-//        if (existUser(password, email)) {
-//            return findUserByEmail(email);
-//        } else {
-//            return null;
-//        }
-//    }
-    public void addCollaborator(User us1, User us2) {
+    
+    public void askUserToCollaborator(int idUs1, int idUs2) {
+        User us1 = getUser(idUs1);
+        User us2 = getUser(idUs2);
 
         org.hibernate.Transaction tx = session.beginTransaction();
         us1.getUsersForIdUser1().add(us2);
-        session.save(us1);
+        session.saveOrUpdate(us1);
         tx.commit();
     }
 
-    public List<User> getCollaborator(User user) {
+    public void addCollaborator(int id1, int id2) {
+
+        org.hibernate.Transaction tx = session.beginTransaction();
+        User us = getUser(id1);
+        User us2 = getUser(id2);
+        us.getUsersForIdUser2_1().add(us2);
+        session.saveOrUpdate(us);
+        tx.commit();
+    }
+
+    public List<User> getCollaborator(int userId) {
         List<User> listUser = new ArrayList<User>();
-        Set<User> setUser = user.getUsersForIdUser1();
+        Set<User> setUser = getUser(userId).getUsersForIdUser1_1();
         Iterator<User> it = setUser.iterator();
         while (it.hasNext()) {
             listUser.add(it.next());
         }
-        setUser = user.getUsersForIdUser2();
+        setUser = getUser(userId).getUsersForIdUser2_1();
         it = setUser.iterator();
         while (it.hasNext()) {
             listUser.add(it.next());
@@ -133,8 +147,8 @@ public class UserDAO {
 
     public void removeCollaborator(User us1, User us2) {
         org.hibernate.Transaction tx = session.beginTransaction();
-        us1.getUsersForIdUser1().remove(us2);
-        us1.getUsersForIdUser2().remove(us2);
+        us1.getUsersForIdUser1_1().remove(us2);
+        us1.getUsersForIdUser2_1().remove(us2);
         session.save(us1);
         tx.commit();
     }
@@ -207,6 +221,39 @@ public class UserDAO {
             return false;
         }
     }
+    
+    public User getUserByMailAndPassword(String password, String email) {
+        User user = null;
+        String pass;
+        try {
+            user = findUserByEmail(email);
+            pass = user.getPassword();
+        } catch (Exception e) {
+            return user;
+        }
+
+
+        byte[] defaultBytes = password.getBytes();
+        try {
+            MessageDigest algorithm = MessageDigest.getInstance("MD5");
+            algorithm.reset();
+            algorithm.update(defaultBytes);
+            byte messageDigest[] = algorithm.digest();
+
+            StringBuffer hexString = new StringBuffer();
+            for (int i = 0; i < messageDigest.length; i++) {
+                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+            }
+            password = hexString.toString() + "";
+        } catch (NoSuchAlgorithmException nsae) {
+        }
+
+        if (password.equals(pass)) {
+            return user;
+        } else {
+            return user;
+        }
+    }
 
     public List<File> getGroupFilesByUser(User user) {
         List<File> listFiles = new ArrayList();
@@ -240,24 +287,48 @@ public class UserDAO {
                 File f = itFile.next();
                 System.out.println("20 : " + session.isOpen());
                 try {
-                    u.getFiles();//.add(f);
+                    addFileToUser(f, u);
                 } catch (LazyInitializationException e) {
                     e.printStackTrace();
                 }
                 System.out.println("21 : " + session.isOpen());
             }
-            try {
-                session.update(u);
-            } catch (ConstraintViolationException e) {
-                e.printStackTrace();
-            }
             System.out.println("22 : " + session.isOpen());
         }
-        tx.commit();
         return lists;
     }
-    
-    public void addFileToUser(File f){
-        
+
+    public void addFileToUser(File f, User u) {
+        u.getFiles_1().add(f);
+        org.hibernate.Transaction tx = session.beginTransaction();
+        session.update(u);
+        tx.commit();
     }
+
+    public void askToJoinGroup(int usId, Group gr) {
+        User us = getUser(usId);
+        org.hibernate.Transaction tx = session.beginTransaction();
+        us.getGroups_1().add(gr);
+        session.saveOrUpdate(us);
+        tx.commit();
+    }
+    
+    public User validateLogin(String mail, String password) {
+
+    /** Get the session id value */
+        FlexSession flexSession = FlexContext.getFlexSession();
+        String sessionId = flexSession.getId();
+        User user = new User();
+        if(existUser(password, mail)) {
+            user = getUserByMailAndPassword(password, mail);
+            user.setSessionId(sessionId);
+            
+            org.hibernate.Transaction tx = session.beginTransaction();
+            session.saveOrUpdate(user);
+            tx.commit();
+        }
+
+        return user;
+    } 
+    
 }

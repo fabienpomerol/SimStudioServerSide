@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 24 janv. 2012 14:13:23 by Hibernate Tools 3.2.1.GA -->
+<!-- Generated 30 janv. 2012 11:55:18 by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
     <class name="DAO.User" table="user" catalog="simstudio">
         <id name="id" type="java.lang.Integer">
@@ -23,6 +23,17 @@
         <property name="userName" type="string">
             <column name="user_name" length="20" not-null="true" unique="true" />
         </property>
+        <property name="sessionId" type="string">
+            <column name="session_id" length="50" />
+        </property>
+        <set name="usersForIdUser1" inverse="false" table="asking_relationship_user">
+            <key>
+                <column name="id_user_2" not-null="true" />
+            </key>
+            <many-to-many entity-name="DAO.User">
+                <column name="id_user_1" not-null="true" />
+            </many-to-many>
+        </set>
         <set name="groups" inverse="false" table="group_admin">
             <key>
                 <column name="user_id" not-null="true" />
@@ -31,12 +42,20 @@
                 <column name="group_id" not-null="true" />
             </many-to-many>
         </set>
-        <set name="usersForIdUser1" inverse="false" table="user_collaborator">
+        <set name="usersForIdUser1_1" inverse="false" table="user_collaborator">
             <key>
                 <column name="id_user_2" not-null="true" />
             </key>
             <many-to-many entity-name="DAO.User">
                 <column name="id_user_1" not-null="true" />
+            </many-to-many>
+        </set>
+        <set name="usersForIdUser2" inverse="false" table="asking_relationship_user">
+            <key>
+                <column name="id_user_1" not-null="true" />
+            </key>
+            <many-to-many entity-name="DAO.User">
+                <column name="id_user_2" not-null="true" />
             </many-to-many>
         </set>
         <set name="files" inverse="true">
@@ -45,7 +64,15 @@
             </key>
             <one-to-many class="DAO.File" />
         </set>
-        <set name="usersForIdUser2" inverse="false" table="user_collaborator">
+        <set name="groups_1" inverse="false" table="asking_relationship_group">
+            <key>
+                <column name="id_user" not-null="true" />
+            </key>
+            <many-to-many entity-name="DAO.Group">
+                <column name="id_group" not-null="true" />
+            </many-to-many>
+        </set>
+        <set name="usersForIdUser2_1" inverse="false" table="user_collaborator">
             <key>
                 <column name="id_user_1" not-null="true" />
             </key>
@@ -73,7 +100,7 @@
             </key>
             <one-to-many class="DAO.Message" />
         </set>
-        <set name="groups_1" inverse="false" table="group_user">
+        <set name="groups_2" inverse="false" table="group_user">
             <key>
                 <column name="user_id" not-null="true" />
             </key>

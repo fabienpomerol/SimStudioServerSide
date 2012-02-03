@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 24 janv. 2012 14:13:23 by Hibernate Tools 3.2.1.GA -->
+<!-- Generated 30 janv. 2012 11:55:18 by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
     <class name="DAO.Group" table="group" catalog="simstudio">
         <id name="id" type="java.lang.Integer">
@@ -27,13 +27,21 @@
                 <column name="file_id" not-null="true" />
             </many-to-many>
         </set>
+        <set name="users_1" inverse="false" table="asking_relationship_group">
+            <key>
+                <column name="id_group" not-null="true" />
+            </key>
+            <many-to-many entity-name="DAO.User">
+                <column name="id_user" not-null="true" />
+            </many-to-many>
+        </set>
         <set name="messages" inverse="true">
             <key>
                 <column name="id_group" not-null="true" />
             </key>
             <one-to-many class="DAO.Message" />
         </set>
-        <set name="users_1" inverse="false" table="group_user">
+        <set name="users_2" inverse="false" table="group_user">
             <key>
                 <column name="group_id" not-null="true" />
             </key>

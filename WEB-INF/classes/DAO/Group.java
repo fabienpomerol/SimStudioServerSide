@@ -1,5 +1,5 @@
 package DAO;
-// Generated 24 janv. 2012 14:13:23 by Hibernate Tools 3.2.1.GA
+// Generated 30 janv. 2012 11:55:17 by Hibernate Tools 3.2.1.GA
 
 
 import java.util.HashSet;
@@ -15,8 +15,9 @@ public class Group  implements java.io.Serializable {
      private String name;
      private Set users = new HashSet(0);
      private Set files = new HashSet(0);
-     private Set messages = new HashSet(0);
      private Set users_1 = new HashSet(0);
+     private Set messages = new HashSet(0);
+     private Set users_2 = new HashSet(0);
 
     public Group() {
     }
@@ -25,12 +26,13 @@ public class Group  implements java.io.Serializable {
     public Group(String name) {
         this.name = name;
     }
-    public Group(String name, Set users, Set files, Set messages, Set users_1) {
+    public Group(String name, Set users, Set files, Set users_1, Set messages, Set users_2) {
        this.name = name;
        this.users = users;
        this.files = files;
-       this.messages = messages;
        this.users_1 = users_1;
+       this.messages = messages;
+       this.users_2 = users_2;
     }
    
     public Integer getId() {
@@ -61,6 +63,13 @@ public class Group  implements java.io.Serializable {
     public void setFiles(Set files) {
         this.files = files;
     }
+    public Set getUsers_1() {
+        return this.users_1;
+    }
+    
+    public void setUsers_1(Set users_1) {
+        this.users_1 = users_1;
+    }
     public Set getMessages() {
         return this.messages;
     }
@@ -68,12 +77,12 @@ public class Group  implements java.io.Serializable {
     public void setMessages(Set messages) {
         this.messages = messages;
     }
-    public Set getUsers_1() {
-        return this.users_1;
+    public Set getUsers_2() {
+        return this.users_2;
     }
     
-    public void setUsers_1(Set users_1) {
-        this.users_1 = users_1;
+    public void setUsers_2(Set users_2) {
+        this.users_2 = users_2;
     }
 
 

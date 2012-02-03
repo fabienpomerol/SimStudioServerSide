@@ -44,8 +44,8 @@ public class MessageDAO {
     }
 
     public List<Message> getMessagesByGroup(Group group) {
-        List listMessages = new ArrayList();
         Set<Message> setMessages = group.getMessages();
+        List<Message> listMessages = new ArrayList();
         Iterator<Message> it = setMessages.iterator();
         while (it.hasNext()) {
             listMessages.add(it.next());
