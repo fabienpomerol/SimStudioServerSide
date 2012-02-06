@@ -98,6 +98,71 @@ public class UserDAO {
         return user;
     }
 
+    public String editUser(int id, String firstName, String lastName, String email, String oldPassword, String password, String passwordConfirmation) {
+        String s = "";
+        User us = getUser(id);
+        us.setFirstName(firstName);
+        us.setLastName(lastName);
+        org.hibernate.Transaction tx = session.beginTransaction();
+        Query q = session.createQuery("from User user where user.id!=" + id+ "and user.email='"+email+"'");
+        
+        if (!q.list().isEmpty()) {
+            s = "Email déjà utilisé";
+            return s;
+        } else {
+            us.setEmail(email);
+        }
+        if (!oldPassword.isEmpty()) {
+            
+            
+            
+            if (password.equals(passwordConfirmation)) {
+                byte[] defaultBytes = password.getBytes();
+                try {
+                    MessageDigest algorithm = MessageDigest.getInstance("MD5");
+                    algorithm.reset();
+                    algorithm.update(defaultBytes);
+                    byte messageDigest[] = algorithm.digest();
+
+                    StringBuilder hexString = new StringBuilder();
+                    for (int i = 0; i < messageDigest.length; i++) {
+                        hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+                    }
+                    password = hexString.toString() + "";
+                } catch (NoSuchAlgorithmException nsae) {
+                }
+                byte[] defaultBytes2 = oldPassword.getBytes();
+                try {
+                    MessageDigest algorithm2 = MessageDigest.getInstance("MD5");
+                    algorithm2.reset();
+                    algorithm2.update(defaultBytes2);
+                    byte messageDigest[] = algorithm2.digest();
+
+                    StringBuilder hexString = new StringBuilder();
+                    for (int i = 0; i < messageDigest.length; i++) {
+                        hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+                    }
+                    oldPassword = hexString.toString() + "";
+                } catch (NoSuchAlgorithmException nsae) {
+                }
+                if (!us.getPassword().equals(oldPassword)) {
+                    s = "Password incorrect";
+                    return s;
+                } else {
+                    us.setPassword(password);
+                }
+            } else {
+                s = "Les deux passwords ne correspondent pas";
+                return s;
+            }
+        }
+        //org.hibernate.Transaction tx = session.beginTransaction();
+        session.saveOrUpdate(us);
+        tx.commit();
+
+        return s;
+    }
+
     public List<User> getUsers() {
         List<User> userList = null;
         try {
@@ -109,7 +174,7 @@ public class UserDAO {
         }
         return userList;
     }
-    
+
     public void askUserToCollaborator(int idUs1, int idUs2) {
         User us1 = getUser(idUs1);
         User us2 = getUser(idUs2);
@@ -221,7 +286,7 @@ public class UserDAO {
             return false;
         }
     }
-    
+
     public User getUserByMailAndPassword(String password, String email) {
         User user = null;
         String pass;
@@ -312,23 +377,22 @@ public class UserDAO {
         session.saveOrUpdate(us);
         tx.commit();
     }
-    
+
     public User validateLogin(String mail, String password) {
 
-    /** Get the session id value */
+        /** Get the session id value */
         FlexSession flexSession = FlexContext.getFlexSession();
         String sessionId = flexSession.getId();
         User user = new User();
-        if(existUser(password, mail)) {
+        if (existUser(password, mail)) {
             user = getUserByMailAndPassword(password, mail);
             user.setSessionId(sessionId);
-            
+
             org.hibernate.Transaction tx = session.beginTransaction();
             session.saveOrUpdate(user);
             tx.commit();
         }
 
         return user;
-    } 
-    
+    }
 }
