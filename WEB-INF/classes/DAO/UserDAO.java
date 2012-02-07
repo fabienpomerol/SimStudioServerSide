@@ -46,21 +46,11 @@ public class UserDAO {
     }
 
     public String subscription(String email, String password, String username, String firstName, String lastName) {
-        byte[] defaultBytes = password.getBytes();
-        try {
-            MessageDigest algorithm = MessageDigest.getInstance("MD5");
-            algorithm.reset();
-            algorithm.update(defaultBytes);
-            byte messageDigest[] = algorithm.digest();
+        
+        EncryptMD5 encr = new EncryptMD5();
+        password = encr.encryptMD5(password);
 
-            StringBuilder hexString = new StringBuilder();
-            for (int i = 0; i < messageDigest.length; i++) {
-                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
-            }
-            password = hexString.toString() + "";
-        } catch (NoSuchAlgorithmException nsae) {
-        }
-
+        System.out.println(password);
         org.hibernate.Transaction tx = session.beginTransaction();
         User user = new User(firstName, lastName, password, email, username);
         try {
@@ -113,38 +103,15 @@ public class UserDAO {
             us.setEmail(email);
         }
         if (!oldPassword.isEmpty()) {
-            
-            
-            
+            if(!password.isEmpty() && !passwordConfirmation.isEmpty())
+            {
             if (password.equals(passwordConfirmation)) {
-                byte[] defaultBytes = password.getBytes();
-                try {
-                    MessageDigest algorithm = MessageDigest.getInstance("MD5");
-                    algorithm.reset();
-                    algorithm.update(defaultBytes);
-                    byte messageDigest[] = algorithm.digest();
-
-                    StringBuilder hexString = new StringBuilder();
-                    for (int i = 0; i < messageDigest.length; i++) {
-                        hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
-                    }
-                    password = hexString.toString() + "";
-                } catch (NoSuchAlgorithmException nsae) {
-                }
-                byte[] defaultBytes2 = oldPassword.getBytes();
-                try {
-                    MessageDigest algorithm2 = MessageDigest.getInstance("MD5");
-                    algorithm2.reset();
-                    algorithm2.update(defaultBytes2);
-                    byte messageDigest[] = algorithm2.digest();
-
-                    StringBuilder hexString = new StringBuilder();
-                    for (int i = 0; i < messageDigest.length; i++) {
-                        hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
-                    }
-                    oldPassword = hexString.toString() + "";
-                } catch (NoSuchAlgorithmException nsae) {
-                }
+                EncryptMD5 encr = new EncryptMD5();
+                password = encr.encryptMD5(password);
+                oldPassword = encr.encryptMD5(oldPassword);
+                
+                    System.out.println(us.getPassword());
+                    System.out.println(oldPassword);
                 if (!us.getPassword().equals(oldPassword)) {
                     s = "Password incorrect";
                     return s;
@@ -153,6 +120,11 @@ public class UserDAO {
                 }
             } else {
                 s = "Les deux passwords ne correspondent pas";
+                return s;
+            }
+            } else
+            {
+                s = "Un des champ de password est vide";
                 return s;
             }
         }
@@ -263,22 +235,9 @@ public class UserDAO {
         } catch (Exception e) {
             return false;
         }
-
-
-        byte[] defaultBytes = password.getBytes();
-        try {
-            MessageDigest algorithm = MessageDigest.getInstance("MD5");
-            algorithm.reset();
-            algorithm.update(defaultBytes);
-            byte messageDigest[] = algorithm.digest();
-
-            StringBuffer hexString = new StringBuffer();
-            for (int i = 0; i < messageDigest.length; i++) {
-                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
-            }
-            password = hexString.toString() + "";
-        } catch (NoSuchAlgorithmException nsae) {
-        }
+        
+        EncryptMD5 encr = new EncryptMD5();
+        password = encr.encryptMD5(password);
 
         if (password.equals(pass)) {
             return true;
@@ -290,34 +249,11 @@ public class UserDAO {
     public User getUserByMailAndPassword(String password, String email) {
         User user = null;
         String pass;
-        try {
+        if(existUser(password, email))
+        {
             user = findUserByEmail(email);
-            pass = user.getPassword();
-        } catch (Exception e) {
-            return user;
         }
-
-
-        byte[] defaultBytes = password.getBytes();
-        try {
-            MessageDigest algorithm = MessageDigest.getInstance("MD5");
-            algorithm.reset();
-            algorithm.update(defaultBytes);
-            byte messageDigest[] = algorithm.digest();
-
-            StringBuffer hexString = new StringBuffer();
-            for (int i = 0; i < messageDigest.length; i++) {
-                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
-            }
-            password = hexString.toString() + "";
-        } catch (NoSuchAlgorithmException nsae) {
-        }
-
-        if (password.equals(pass)) {
-            return user;
-        } else {
-            return user;
-        }
+        return user;
     }
 
     public List<File> getGroupFilesByUser(User user) {
@@ -336,14 +272,11 @@ public class UserDAO {
     }
 
     public List[] removeGroupAddUserFiles(List[] lists) {
-        System.out.println("15 : " + session.isOpen());
         Iterator<User> itUser = lists[0].iterator();
-        System.out.println("16 : " + session.isOpen());
 
         org.hibernate.Transaction tx = session.beginTransaction();
 
         while (itUser.hasNext()) {
-            System.out.println("17 : " + session.isOpen());
             Iterator<File> itFile = lists[1].iterator();
             System.out.println("18 : " + session.isOpen());
             User u = itUser.next();
@@ -392,7 +325,6 @@ public class UserDAO {
             session.saveOrUpdate(user);
             tx.commit();
         }
-
         return user;
     }
 }
