@@ -105,8 +105,9 @@ public class FileDAO {
         return listFiles;
     }
 
-    public void shareFileWithUser(User user, File file) {
-        user.getFiles().add(file);
+    public void shareFileWithUser(User user, int idFile) {
+        File f = getFileByID(idFile);
+        user.getFiles().add(f);
         org.hibernate.Transaction tx = session.beginTransaction();
         session.save(user);
         tx.commit();

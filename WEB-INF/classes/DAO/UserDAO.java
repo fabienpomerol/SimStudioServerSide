@@ -157,6 +157,17 @@ public class UserDAO {
         tx.commit();
     }
 
+    public void removeAskingCollaborator(int idUs1, int idUs2){
+        User us1 = getUser(idUs1);
+        User us2 = getUser(idUs2);
+        
+        org.hibernate.Transaction tx = session.beginTransaction();
+        us1.getUsersForIdUser1().remove(us2);
+        us1.getUsersForIdUser2().remove(us2);
+        session.save(us1);
+        tx.commit();
+    }
+    
     public void addCollaborator(int id1, int id2) {
 
         org.hibernate.Transaction tx = session.beginTransaction();
@@ -182,8 +193,10 @@ public class UserDAO {
         return listUser;
     }
 
-    public void removeCollaborator(User us1, User us2) {
+    public void removeCollaborator(int idus1, int idus2) {
         org.hibernate.Transaction tx = session.beginTransaction();
+        User us1= getUser(idus1);
+        User us2 = getUser(idus2);
         us1.getUsersForIdUser1_1().remove(us2);
         us1.getUsersForIdUser2_1().remove(us2);
         session.save(us1);
