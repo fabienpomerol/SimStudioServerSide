@@ -20,7 +20,9 @@ import org.hibernate.Session;
 public class FileDAO {
 
     Session session = null;
-
+    
+    private final String path = "C:\\testSaveFile\\";
+    
     public FileDAO() {
             this.session = HibernateUtil.getSessionFactory().getCurrentSession();
     }
@@ -129,7 +131,9 @@ public class FileDAO {
             File f = itFile.next();
             while (itUser.hasNext()) {
                 User u = itUser.next();
+                java.io.File fileStart = new java.io.File(path+f.getName()+"."+f.getExtension());
                 File fCopie = new File(u, f.getName() + "_" + u.getFirstName() + "_" + u.getLastName(), f.getExtension(), f.getSize(), f.getCreatedAt(), f.getUpdateAt());
+                java.io.File fileToSave = new java.io.File(path+fCopie.getName()+"."+fCopie.getExtension());
                 session.save(fCopie);
             }
         }
