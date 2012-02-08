@@ -107,9 +107,9 @@ public class FileDAO {
 
     public void shareFileWithUser(User user, int idFile) {
         File f = getFileByID(idFile);
-        user.getFiles().add(f);
+        user.getFiles_1().add(f);
         org.hibernate.Transaction tx = session.beginTransaction();
-        session.save(user);
+        session.saveOrUpdate(user);
         tx.commit();
     }
     
@@ -121,26 +121,16 @@ public class FileDAO {
     }
     
     public List[] removeGroupAddFiles(List[] lists) {
-        System.out.println("5 : " + session.isOpen());
-        System.out.println("6 : " + session.isOpen());
         Iterator<File> itFile = lists[1].iterator();
-        System.out.println("7 : " + session.isOpen());
 
         org.hibernate.Transaction tx = session.beginTransaction();
         while (itFile.hasNext()) {
-            System.out.println("8 : " + session.isOpen());
             Iterator<User> itUser = lists[0].iterator();
-            System.out.println("9 : " + session.isOpen());
             File f = itFile.next();
             while (itUser.hasNext()) {
-                System.out.println("10 : " + session.isOpen());
-                System.out.println("11 : " + session.isOpen());
                 User u = itUser.next();
-                System.out.println("12 : " + session.isOpen());
                 File fCopie = new File(u, f.getName() + "_" + u.getFirstName() + "_" + u.getLastName(), f.getExtension(), f.getSize(), f.getCreatedAt(), f.getUpdateAt());
-                System.out.println("13 : " + session.isOpen());
                 session.save(fCopie);
-                System.out.println("14 : " + session.isOpen());
             }
         }
         tx.commit();
