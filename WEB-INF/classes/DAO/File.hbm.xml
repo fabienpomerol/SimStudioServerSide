@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 30 janv. 2012 11:55:18 by Hibernate Tools 3.2.1.GA -->
+<!-- Generated 9 f?vr. 2012 02:34:53 by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
     <class name="DAO.File" table="file" catalog="simstudio">
         <id name="id" type="java.lang.Integer">
@@ -20,11 +20,11 @@
         <property name="size" type="int">
             <column name="size" not-null="true" />
         </property>
-        <property name="createdAt" type="date">
-            <column name="created_at" length="10" not-null="true" />
+        <property name="createdAt" type="timestamp">
+            <column name="created_at" length="19" not-null="true" />
         </property>
-        <property name="updateAt" type="date">
-            <column name="update_at" length="10" not-null="true" />
+        <property name="updateAt" type="timestamp">
+            <column name="update_at" length="19" not-null="true" />
         </property>
         <set name="groups" inverse="false" table="group_file">
             <key>
