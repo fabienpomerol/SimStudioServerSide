@@ -128,17 +128,19 @@ public class GroupDAO {
         } else {
             Set<User> setUsers = group.getUsers_2();
             Iterator it = setUsers.iterator();
-            System.out.println(setUsers.size());
             while (it.hasNext()) {
                 User u = (User) it.next();
-                if (user.equals(u)) {
+                System.out.println(user.getId()+" : "+u.getId());
+                if (user.getId().equals(u.getId())){
+                    //u.getId()) {
+                    System.out.println("removing");
                     it.remove();
                 }
             }
+            System.out.println(setUsers.size());
             org.hibernate.Transaction tx = session.beginTransaction();
-            session.save(group);
+            session.saveOrUpdate(group);
             tx.commit();
-
             return true;
         }
     }

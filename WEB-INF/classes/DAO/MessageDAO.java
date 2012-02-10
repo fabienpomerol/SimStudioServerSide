@@ -24,6 +24,19 @@ public class MessageDAO {
         this.session = HibernateUtil.getSessionFactory().getCurrentSession();
     }
 
+    public Message getMessageById(int id)
+    {
+         Message message = null;
+        try {
+            org.hibernate.Transaction tx = session.beginTransaction();
+            Query q = session.createQuery("from Message where id=" + id);
+            message = (Message) q.uniqueResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return message;
+    }
+    
     public void addMessage(User user, Group group, String title, String content) {
         java.util.Date date = new java.util.Date();
         Message message = new Message(user, group, content, date);
